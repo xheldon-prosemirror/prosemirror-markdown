@@ -1,3 +1,161 @@
+## 1.13.0 (2024-05-20)
+
+### Bug fixes
+
+Fix the type of `MarkdownParser.parse` to be non-nullable. Add a strict option to MarkdownSerializer
+
+### New features
+
+The new `strict` option to `MarkdownSerializer` makes it possible to make the serializer ignore node and mark types it doesn't know.
+
+## 1.12.0 (2023-12-11)
+
+### Bug fixes
+
+Block-level markup inside a heading is no longer escaped by the serializer.
+
+Do not backslash-escape a `+` at the start of line when it isn't followed by a space. Upgrade to markdown-it 14
+
+### New features
+
+`MarkdownSerializerState.renderInline` now takes a parameter that controls whether block-level markup should be escaped.
+
+Upgrade to markdown-it version 14, which provides ES modules.
+
+## 1.11.2 (2023-08-04)
+
+### Bug fixes
+
+Fix some unnecessary escapes for period characters in Markdown serialization.
+
+Only escape `#` signs if they would otherwise create a heading. Add a test for headings in list items
+
+Fix a bug in `MarkdownSerializer` that broken expelling of whitespace from marks when the mark spanned multiple nodes.
+
+## 1.11.1 (2023-06-30)
+
+### Bug fixes
+
+Allow any blocks as first child of list items to align with what Markdown itself does.
+
+Add parse rules that clear `strong` and `em` marks when inline CSS resets it.
+
+## 1.11.0 (2023-05-17)
+
+### Bug fixes
+
+Make sure blank lines at the end of code blocks are properly serialized.
+
+Convert soft breaks (single newlines) in Markdown to spaces, rather than newlines in the ProseMirror document, because newlines tend to behave awkwardly in the editor.
+
+Fix a bug that cause the object passed as configuration to `MarkdownSerializer` to be mutated. Add release note
+
+Include CommonJS type declarations in the package to please new TypeScript resolution settings.
+
+### New features
+
+A new option to `MarkdownSerializer` allows client code to configure which node type should be treated as hard breaks during mark serialization. Remove the extra left bracket
+
+## 1.10.1 (2022-10-28)
+
+### Bug fixes
+
+Don't treat the empty string the same as `null` in `wrapBlock`'s `firstDelim` argument. Check content of code blocks for any sequence of backticks
+
+Use longer sequences of backticks when serializing a code block that contains three or more backticks in a row.
+
+## 1.10.0 (2022-10-05)
+
+### New features
+
+You can now pass an optional markdown-it environment object to .
+
+## 1.9.4 (2022-08-19)
+
+### Bug fixes
+
+Don't escape colon characters at the start of a line.
+
+Escape parentheses in images and links.
+
+Allow links to wrap emphasis markers when serializing Markdown.
+
+## 1.9.3 (2022-07-05)
+
+### Bug fixes
+
+Make sure '\!' characters in front of links are escaped.
+
+## 1.9.2 (2022-07-04)
+
+### Bug fixes
+
+Don't escape characters in autolinks.
+
+Fix a bug that caused the serializer to not escape start-of-line markup when inside a list.
+
+## 1.9.1 (2022-06-02)
+
+### Bug fixes
+
+Fix a bug where inline nodes with content would reset the marks in their parent node during Markdown parsing.
+
+## 1.9.0 (2022-05-30)
+
+### New features
+
+Include TypeScript type declarations.
+
+## 1.8.0 (2022-03-14)
+
+### New features
+
+`MarkdownSerializer` now takes an `escapeExtraCharacters` option that can be used to control backslash-escaping behavior. Fix types for new option
+
+## 1.7.1 (2022-02-16)
+
+### Bug fixes
+
+Avoid escaping underscores surrounded by word characters.
+
+## 1.7.0 (2022-01-06)
+
+### New features
+
+Upgrade markdown-it to version 12.
+
+## 1.6.2 (2022-01-04)
+
+### Bug fixes
+
+Fix a bug where URL text in links and images was overzealously escaped.
+
+## 1.6.1 (2021-12-16)
+
+### Bug fixes
+
+Fix a bug where `MarkdownParser.parse` could return null when the parsed content doesn't fit the schema.
+
+Make sure underscores are escaped when serializing to Markdown.
+
+## 1.6.0 (2021-09-21)
+
+### New features
+
+`MarkdownParser.tokenizer` is now public, for easier creation of parsers that base on other parsers.
+
+## 1.5.2 (2021-09-03)
+
+### Bug fixes
+
+Serializing to Markdown now properly escapes '>' characters at the start of the line.
+
+## 1.5.1 (2021-01-06)
+
+### Bug fixes
+
+The Markdown parser will now correctly set the `tight` attribute on list nodes.
+
 ## 1.5.0 (2020-07-17)
 
 ### New features

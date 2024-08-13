@@ -1,6 +1,6 @@
-import {Schema} from "prosemirror-model"
+import {Schema, MarkSpec} from "prosemirror-model"
 
-// ::Schema Document schema for the data model used by CommonMark.
+/// Document schema for the data model used by CommonMark.
 export const schema = new Schema({
   nodes: {
     doc: {
@@ -49,7 +49,7 @@ export const schema = new Schema({
       marks: "",
       attrs: {params: {default: ""}},
       parseDOM: [{tag: "pre", preserveWhitespace: "full", getAttrs: node => (
-        {params: node.getAttribute("data-params") || ""}
+        {params: (node as HTMLElement).getAttribute("data-params") || ""}
       )}],
       toDOM(node) { return ["pre", node.attrs.params ? {"data-params": node.attrs.params} : {}, ["code", 0]] }
     },
@@ -59,8 +59,8 @@ export const schema = new Schema({
       group: "block",
       attrs: {order: {default: 1}, tight: {default: false}},
       parseDOM: [{tag: "ol", getAttrs(dom) {
-        return {order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1,
-                tight: dom.hasAttribute("data-tight")}
+        return {order: (dom as HTMLElement).hasAttribute("start") ? +(dom as HTMLElement).getAttribute("start")! : 1,
+                tight: (dom as HTMLElement).hasAttribute("data-tight")}
       }}],
       toDOM(node) {
         return ["ol", {start: node.attrs.order == 1 ? null : node.attrs.order,
@@ -72,12 +72,12 @@ export const schema = new Schema({
       content: "list_item+",
       group: "block",
       attrs: {tight: {default: false}},
-      parseDOM: [{tag: "ul", getAttrs: dom => ({tight: dom.hasAttribute("data-tight")})}],
+      parseDOM: [{tag: "ul", getAttrs: dom => ({tight: (dom as HTMLElement).hasAttribute("data-tight")})}],
       toDOM(node) { return ["ul", {"data-tight": node.attrs.tight ? "true" : null}, 0] }
     },
 
     list_item: {
-      content: "paragraph block*",
+      content: "block+",
       defining: true,
       parseDOM: [{tag: "li"}],
       toDOM() { return ["li", 0] }
@@ -98,9 +98,9 @@ export const schema = new Schema({
       draggable: true,
       parseDOM: [{tag: "img[src]", getAttrs(dom) {
         return {
-          src: dom.getAttribute("src"),
-          title: dom.getAttribute("title"),
-          alt: dom.getAttribute("alt")
+          src: (dom as HTMLElement).getAttribute("src"),
+          title: (dom as HTMLElement).getAttribute("title"),
+          alt: (dom as HTMLElement).getAttribute("alt")
         }
       }}],
       toDOM(node) { return ["img", node.attrs] }
@@ -117,16 +117,23 @@ export const schema = new Schema({
 
   marks: {
     em: {
-      parseDOM: [{tag: "i"}, {tag: "em"},
-                 {style: "font-style", getAttrs: value => value == "italic" && null}],
+      parseDOM: [
+        {tag: "i"}, {tag: "em"},
+        {style: "font-style=italic"},
+        {style: "font-style=normal", clearMark: m => m.type.name == "em"}
+      ],
       toDOM() { return ["em"] }
     },
 
     strong: {
-      parseDOM: [{tag: "b"}, {tag: "strong"},
-                 {style: "font-weight", getAttrs: value => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null}],
+      parseDOM: [
+        {tag: "strong"},
+        {tag: "b", getAttrs: node => node.style.fontWeight != "normal" && null},
+        {style: "font-weight=400", clearMark: m => m.type.name == "strong"},
+        {style: "font-weight", getAttrs: value => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null}
+      ],
       toDOM() { return ["strong"] }
-    },
+    } as MarkSpec,
 
     link: {
       attrs: {
@@ -135,7 +142,7 @@ export const schema = new Schema({
       },
       inclusive: false,
       parseDOM: [{tag: "a[href]", getAttrs(dom) {
-        return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
+        return {href: (dom as HTMLElement).getAttribute("href"), title: dom.getAttribute("title")}
       }}],
       toDOM(node) { return ["a", node.attrs] }
     },
